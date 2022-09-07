@@ -1,5 +1,6 @@
 const inquirer = require("inquirer");
 const fs = require("fs");
+const mysql2 = require('mysql2');
 
 const questions = () => {
   return inquirer.prompt([
@@ -15,6 +16,7 @@ const questions = () => {
         "Add a role",
         "Add an employee",
         "Update employee role",
+        "Quit"
       ],
     },
   ]);
