@@ -21,6 +21,7 @@ const db = mysql.createConnection(
   console.log("Connected to the employees_db databse")
 );
 
+// Connect to the db and start application
 db.connect((err) => {
   if (err) {
     throw err;
@@ -28,6 +29,7 @@ db.connect((err) => {
   startQuestions();
 });
 
+// Begin the application
 const startQuestions = () => {
   inquirer
     .prompt([
@@ -59,16 +61,19 @@ const startQuestions = () => {
           allRoles();
           break;
         case "View all employees":
-          addNewDepartment();
-          break;
-        case "Add a department":
-          allRoles();
-          break;
-        case "Add a role":
           allEmployees();
           break;
-        case "Add an employee":
+        case "Add a department":
+          addNewDepartment();
+          break;
+        case "View all employees":
+          allEmployees();
+          break;
+        case "Add a role":
           addRole();
+          break;
+        case "Add new employee":
+          addNewEmployee();
           break;
         case "Update employee role":
           updateRole();
@@ -82,17 +87,38 @@ const startQuestions = () => {
 
 // View all departments
 const allDepartments = () => {
-  console.log("All Departments");
+  console.log("Department View");
+    let query = "SELECT * FROM department";
+    db.query(query, function (err, res) {
+      let departmentArray = [];
+      res.forEach((department) => departmentArray.push(department));
+      console.table(departmentArray);
+      startQuestions();
+    });
 };
 
 // View all Roles
 const allRoles = () => {
   console.log("All roles");
+  let query = 'SELECT * FROM role';
+  db.query(query, function(err, res) {
+    let allRolesArray = [];
+    res.forEach((role) => allRolesArray.push(role));
+    console.table(allRolesArray)
+    startQuestions();
+  })
 };
 
 // View all employees
 const allEmployees = () => {
   console.log("All employees");
+      let query = "SELECT * FROM employee";
+      db.query(query, function (err, res) {
+        let employeeArray = [];
+        res.forEach((employee) => employeeArray.push(employee));
+        console.table(employeeArray);
+        startQuestions();
+      });
 };
 
 // Add a new department
@@ -105,6 +131,11 @@ const addRole = () => {
   console.log("Add a role");
 };
 
+// Add a new employee
+const addNewEmployee = () => {
+  console.log("Add a new Employee");
+};
+
 // Update an employees role
 const updateRole = () => {
   console.log("Update an employees role");
@@ -115,7 +146,7 @@ app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
 
-// // Create a new employee
+// Create a new employee
 // app.post("/api/new_employee", ({ body }, res) => {
 //   const sql = "INSERT INTO employee (new_employee) VALUES (?)";
 //   const params = [body.employees_db];
