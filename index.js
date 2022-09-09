@@ -25,58 +25,60 @@ db.connect((err) => {
   if (err) {
     throw err;
   }
-  startQuestions()
+  startQuestions();
 });
 
 const startQuestions = () => {
-  inquirer.prompt([
-    {
-      type: "list",
-      name: "title",
-      message: "What would you like to do?",
-      choices: [
-        "View all departments",
-        "View all roles",
-        "View all employees",
-        "Add a department",
-        "Add a role",
-        "Add an employee",
-        "Update employee role",
-        "Quit",
-      ],
-    },
-  ]).then(res => {
-      let answer = res.title 
+  inquirer
+    .prompt([
+      {
+        type: "list",
+        name: "title",
+        message: "What would you like to do?",
+        choices: [
+          "View all departments",
+          "View all roles",
+          "View all employees",
+          "Add a department",
+          "Add a role",
+          "Add an employee",
+          "Update employee role",
+          "Quit",
+        ],
+      },
+    ])
+    .then(res => {
+      let answer = res.title;
 
- // Call individual functions for user interactions
-  switch (res) {
-    case "View all departments":
-      allDepartments();
-      break;
-    case "View all roles":
-      allRoles();
-      break;
-    case "View all employees":
-      addNewDepartment();
-      break;
-    case "Add a department":
-      allRoles();
-      break;
-    case "Add a role":
-      allEmployees();
-      break;
-    case "Add an employee":
-      addRole();
-      break;
-    case "Update employee role":
-      updateRole();
-    case "Quit":
-      return;
-    default:
-      "You choose an option";
-  }
-});
-
+      // Call individual functions for user interactions
+      switch (answer) {
+        case "View all departments":
+          allDepartments();
+          break;
+        case "View all roles":
+          allRoles();
+          break;
+        case "View all employees":
+          addNewDepartment();
+          break;
+        case "Add a department":
+          allRoles();
+          break;
+        case "Add a role":
+          allEmployees();
+          break;
+        case "Add an employee":
+          addRole();
+          break;
+        case "Update employee role":
+          updateRole();
+        case "Quit":
+          return;
+        default:
+          "You choose an option";
+      }
+    });
+};
 
 // View all departments
 const allDepartments = () => {
