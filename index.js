@@ -29,7 +29,7 @@ db.connect((err) => {
 });
 
 const startQuestions = () => {
-  let answer = inquirer.prompt([
+  inquirer.prompt([
     {
       type: "list",
       name: "title",
@@ -45,10 +45,11 @@ const startQuestions = () => {
         "Quit",
       ],
     },
-  ]);
+  ]).then(res => {
+      let answer = res.title 
 
-  // Call individual functions for user interactions
-  switch (answer.action) {
+ // Call individual functions for user interactions
+  switch (res) {
     case "View all departments":
       allDepartments();
       break;
@@ -72,34 +73,42 @@ const startQuestions = () => {
     case "Quit":
       return;
     default:
-      "You must choose an option";
+      "You choose an option";
   }
-};
+});
 
+
+// View all departments
 const allDepartments = () => {
   console.log("All Departments");
 };
 
+// View all Roles
 const allRoles = () => {
   console.log("All roles");
 };
 
+// View all employees
 const allEmployees = () => {
   console.log("All employees");
 };
 
+// Add a new department
 const addNewDepartment = () => {
   console.log("Add a new department");
 };
 
+// Add a new role
 const addRole = () => {
   console.log("Add a role");
 };
 
+// Update an employees role
 const updateRole = () => {
   console.log("Update an employees role");
 };
 
+// Starting server
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
