@@ -1,9 +1,11 @@
 const inquirer = require("inquirer");
 const fs = require("fs");
-const mysql2 = require('mysql2');
+const mysql = require('mysql2');
+const consoleTable = require("console.table");
 
-const questions = () => {
-  return inquirer.prompt([
+
+inquirer.registerPrompt("table", require("./index"));
+  inquirer.prompt([
     {
       type: "list",
       name: "title",
@@ -20,6 +22,5 @@ const questions = () => {
       ],
     },
   ]);
-};
 
-questions();
+// questions();
