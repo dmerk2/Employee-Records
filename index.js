@@ -1,7 +1,6 @@
 const express = require("express");
 const inquirer = require("inquirer");
 const mysql = require("mysql2");
-const consoleTable = require("console.table");
 
 const PORT = process.env.PORT || 3001;
 const app = express();
@@ -15,6 +14,8 @@ const db = mysql.createConnection(
   {
     host: "localhost",
     user: "root",
+
+    // Insert PLACEHOLDER password???
     password: "Ultraatomicwebdesigns123#",
     database: "employees_db",
   },
@@ -49,7 +50,7 @@ const startQuestions = () => {
         ],
       },
     ])
-    .then(res => {
+    .then((res) => {
       let answer = res.title;
 
       // Call individual functions for user interactions
@@ -88,52 +89,85 @@ const startQuestions = () => {
 // View all departments
 const allDepartments = () => {
   console.log("Department View");
-    let query = "SELECT * FROM department";
-    db.query(query, function (err, res) {
-      let departmentArray = [];
-      res.forEach((department) => departmentArray.push(department));
-      console.table(departmentArray);
-      startQuestions();
-    });
+  let query = "SELECT * FROM department";
+  db.query(query, function (err, res) {
+    let departmentArray = [];
+    res.forEach((department) => departmentArray.push(department));
+    console.table(departmentArray);
+    startQuestions();
+  });
 };
 
 // View all Roles
 const allRoles = () => {
   console.log("All roles");
-  let query = 'SELECT * FROM role';
-  db.query(query, function(err, res) {
+  let query = "SELECT * FROM role";
+  db.query(query, function (err, res) {
     let allRolesArray = [];
     res.forEach((role) => allRolesArray.push(role));
-    console.table(allRolesArray)
+    console.table(allRolesArray);
     startQuestions();
-  })
+  });
 };
 
 // View all employees
 const allEmployees = () => {
   console.log("All employees");
-      let query = "SELECT * FROM employee";
-      db.query(query, function (err, res) {
-        let employeeArray = [];
-        res.forEach((employee) => employeeArray.push(employee));
-        console.table(employeeArray);
-        startQuestions();
-      });
+  let query = "SELECT * FROM employee";
+  db.query(query, function (err, res) {
+    let employeeArray = [];
+    res.forEach((employee) => employeeArray.push(employee));
+    console.table(employeeArray);
+    startQuestions();
+  });
 };
 
 // Add a new department
 const addNewDepartment = () => {
   console.log("Add a new department");
+  inquirer
+    .prompt([
+      {
+        name: "newDepartment",
+        type: "input",
+        message: "What department would you like to add?",
+      },
+    ])
+    .then((req,res) => {
+      let answer = res.anwer;
+    });
 };
 
 // Add a new role
 const addRole = () => {
   console.log("Add a role");
+  inquirer
+    .prompt([
+      {
+        name: "newRole",
+        type: "input",
+        message: "What role would you like to add?",
+      },
+    ])
+    .then((req, res) => {
+      let answer = res.anwer;
+    });
 };
 
 // Add a new employee
 const addNewEmployee = () => {
   console.log("Add a new Employee");
+  inquirer
+    .prompt([
+      {
+        name: "newEmployee",
+        type: "input",
+        message: "What is the new employees name?",
+      },
+    ])
+    .then((req, res) => {
+      let answer = res.anwer;
+    });
 };
 
 // Update an employees role
@@ -145,35 +179,3 @@ const updateRole = () => {
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
-
-// Create a new employee
-// app.post("/api/new_employee", ({ body }, res) => {
-//   const sql = "INSERT INTO employee (new_employee) VALUES (?)";
-//   const params = [body.employees_db];
-
-//   db.query(sql, params, (err, result) => {
-//     if (err) {
-//       console.log("Error adding new employee: ", err);
-//       return;
-//     }
-//     res.json({
-//       message: "Added new employee!",
-//       data: body,
-//     });
-//   });
-// });
-
-// // Read all employees
-// app.get("/api/employees_db", (req, res) => {
-//   const sql = "SELECT id, first_name AS name FROM employees";
-//   db.query(sql, (err, rows) => {
-//     if (err) {
-//       res.status(500).json({ error: err.message });
-//       return;
-//     }
-//     res.json({
-//       message: "All employees",
-//       data: rows,
-//     });
-//   });
-// });
