@@ -92,7 +92,9 @@ const allDepartments = () => {
   let query = "SELECT * FROM department";
   db.query(query, function (err, res) {
     let departmentArray = [];
+    // Push all departments to deparments array
     res.forEach((department) => departmentArray.push(department));
+    // View all departments in console.table
     console.table(departmentArray);
     startQuestions();
   });
@@ -125,7 +127,7 @@ const allEmployees = () => {
 // Add a new department
 const addNewDepartment = () => {
   console.log("Add a new department");
-  inquirer
+  let answer = inquirer
     .prompt([
       {
         name: "newDepartment",
@@ -133,8 +135,26 @@ const addNewDepartment = () => {
         message: "What department would you like to add?",
       },
     ])
-    .then((req,res) => {
-      let answer = res.anwer;
+    .then((req, res) => {
+      let result = res.input;
+      console.log(answer);
+      // Create a department
+      app.post("/api/new-department", ({ body }, res) => {
+        const sql = `INSERT INTO department (department_name)
+    VALUES (?)`;
+        const params = [body.department];
+
+        console.log(answer);
+        db.query(sql, params, (err, result) => {
+          if (err) {
+            throw err;
+          }
+          res.json({
+            message: "success",
+            data: body,
+          });
+        });
+      });
     });
 };
 
@@ -150,7 +170,7 @@ const addRole = () => {
       },
     ])
     .then((req, res) => {
-      let answer = res.anwer;
+      let answer = res.input;
     });
 };
 
