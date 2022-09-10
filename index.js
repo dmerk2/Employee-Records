@@ -113,6 +113,16 @@ const allRoles = () => {
 };
 
 // View all employees
+// const allEmployees = () => {
+//   console.log("All employees");
+//   let query = "SELECT * FROM employee";
+//   db.query(query, function (err, res) {
+//     let employeeArray = [];
+//     res.forEach((employee) => employeeArray.push(employee));
+//     console.table(employeeArray);
+//     startQuestions();
+//   });
+// };
 const allEmployees = () => {
   console.log("All employees");
   let query = "SELECT * FROM employee";
@@ -135,33 +145,20 @@ const addNewDepartment = () => {
         message: "What department would you like to add?",
       },
     ])
-    .then((req, res) => {
-      let result = res.input;
+    .then((res) => {
+      // Response from res
+      let result = res;
       console.log(answer);
-      // Create a department
-      app.post("/api/new-department", ({ body }, res) => {
-        const sql = `INSERT INTO department (department_name)
-    VALUES (?)`;
-        const params = [body.department];
-
-        console.log(answer);
-        db.query(sql, params, (err, result) => {
-          if (err) {
-            throw err;
-          }
-          res.json({
-            message: "success",
-            data: body,
-          });
-        });
-      });
+      console.log(result);
+      return addNewDepartment(result);
+      // return this.db.query(`INSERT INTO department SET ?`, result)
     });
 };
 
 // Add a new role
 const addRole = () => {
   console.log("Add a role");
-  inquirer
+  let answer = inquirer
     .prompt([
       {
         name: "newRole",
@@ -169,15 +166,19 @@ const addRole = () => {
         message: "What role would you like to add?",
       },
     ])
-    .then((req, res) => {
-      let answer = res.input;
+    .then((res) => {
+      // Response from res
+      let result = res;
+      console.log(answer);
+      console.log(result);
+      return addRole(result);
     });
 };
 
 // Add a new employee
 const addNewEmployee = () => {
   console.log("Add a new Employee");
-  inquirer
+  let answer = inquirer
     .prompt([
       {
         name: "newEmployee",
@@ -185,8 +186,12 @@ const addNewEmployee = () => {
         message: "What is the new employees name?",
       },
     ])
-    .then((req, res) => {
-      let answer = res.anwer;
+    .then((res) => {
+      // Response from res
+      let result = res;
+      console.log(answer);
+      console.log(result);
+      return addNewEmployee(result);
     });
 };
 
