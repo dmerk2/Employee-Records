@@ -113,16 +113,6 @@ const allRoles = () => {
 };
 
 // View all employees
-// const allEmployees = () => {
-//   console.log("All employees");
-//   let query = "SELECT * FROM employee";
-//   db.query(query, function (err, res) {
-//     let employeeArray = [];
-//     res.forEach((employee) => employeeArray.push(employee));
-//     console.table(employeeArray);
-//     startQuestions();
-//   });
-// };
 const allEmployees = () => {
   console.log("All employees");
   let query = "SELECT * FROM employee";
@@ -176,24 +166,23 @@ const addRole = () => {
 };
 
 // Add a new employee
-const addNewEmployee = () => {
-  console.log("Add a new Employee");
-  let answer = inquirer
-    .prompt([
-      {
-        name: "newEmployee",
-        type: "input",
-        message: "What is the new employees name?",
-      },
-    ])
-    .then((res) => {
-      // Response from res
-      let result = res;
-      console.log(answer);
-      console.log(result);
-      return addNewEmployee(result);
-    });
-};
+// const addNewEmployee = async() => {
+//   console.log("Add a new Employee");
+//   let answer = inquirer
+//     .prompt([
+//       {
+//         type: "input",
+//         message: "What is the new employees name?",
+//       },
+//     ])
+//     .then((res) => {
+//       // Response from res
+//       let result = res;
+//       console.log(answer);
+//       console.log(result);
+//       return addNewEmployee(result);
+//     });
+// };
 
 // Update an employees role
 const updateRole = () => {
