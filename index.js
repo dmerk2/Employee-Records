@@ -79,7 +79,7 @@ const startQuestions = () => {
         case "Update employee role":
           updateRole();
         case "Quit":
-          return;
+          quit();
         default:
           "You choose an option";
       }
@@ -127,7 +127,7 @@ const allEmployees = () => {
 // Add a new department
 const addNewDepartment = () => {
   console.log("Add a new department");
-  let answer = inquirer
+  inquirer
     .prompt([
       {
         name: "newDepartment",
@@ -137,31 +137,50 @@ const addNewDepartment = () => {
     ])
     .then((res) => {
       // Response from res
-      let result = res;
-      console.log(answer);
-      console.log(result);
-      return addNewDepartment(result);
-      // return this.db.query(`INSERT INTO department SET ?`, result)
+      let result = res.newDepartment;
+      let sql = `INSERT INTO department (department_name)
+                VALUES ?`;
+      db.query(sql, result, (err, res) => {
+        if (err) throw err;
+
+        console.log(result);
+        allDepartments();
+      });
     });
 };
 
 // Add a new role
 const addRole = () => {
   console.log("Add a role");
-  let answer = inquirer
+  inquirer
     .prompt([
       {
         name: "newRole",
         type: "input",
         message: "What role would you like to add?",
       },
+      {
+        name: "salary",
+        type: "input",
+        message: "What is the anual salary?",
+      },
+      {
+        name: "departmentID",
+        type: "input",
+        message: "What department will the work in?",
+      },
     ])
     .then((res) => {
       // Response from res
-      let result = res;
-      console.log(answer);
-      console.log(result);
-      return addRole(result);
+      let result = res.newRole;
+      let sql = `INSERT INTO role (title, salary, department_id)
+      VALUE ?`;
+      db.query(sql, result, (err, res) => {
+        if (err) throw err;
+
+        console.log(result);
+        allDepartments();
+      });
     });
 };
 
@@ -187,6 +206,12 @@ const addRole = () => {
 // Update an employees role
 const updateRole = () => {
   console.log("Update an employees role");
+};
+
+const quit = () => {
+  if ("Quit") {
+    process.exit();
+  }
 };
 
 // Starting server
