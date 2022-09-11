@@ -169,19 +169,21 @@ const addRole = () => {
         type: "input",
         message: "What department will the work in?",
       },
-      {
-        name: "quit",
-        type: "confirm",
-        message: "Quit?",
-      },
     ])
     .then((res) => {
       // Response from res
-      let result = res.newRole[res.role, res.salary, res.id];
-      let sql = `INSERT INTO role (title, salary, department_id)
-      VALUE (?, ?, ?)`;
+      let result = res.newRole[(res.role, res.salary, res.id)];
+      const sql = `SELECT role.title, employee.id, employee.first_name, employee.last_name, department.id AS department
+    FROM employee
+    LEFT JOIN role ON (role.id = employee.role_id)
+    LEFT JOIN department ON department.id = role.department_id
+    ORDER BY role.title;`;
+      // let sql = `SELECT role.res.role AS role, res.salary FROM role LEFT JOIN role ON res.department_id = role.id ORDER BY role.title;`;
+      // `INSERT INTO role (title, salary, department_id)
+      // VALUE (?, ?, ?)`;
       db.query(sql, result, (err, res) => {
         if (err) throw err;
+
         for (let i = 0; i < result.length; i++) {
           if (result[i].title === result.role) {
             let res = result[i];
