@@ -139,7 +139,7 @@ const addNewDepartment = () => {
       // Response from res
       let result = res.newDepartment;
       let sql = `INSERT INTO department (department_name)
-                VALUES ?`;
+                VALUES (?)`;
       db.query(sql, result, (err, res) => {
         if (err) throw err;
 
@@ -177,13 +177,17 @@ const addRole = () => {
     ])
     .then((res) => {
       // Response from res
-      let result = res.newRole;
+      let result = res.newRole[res.role, res.salary, res.id];
       let sql = `INSERT INTO role (title, salary, department_id)
-      VALUES ?`;
+      VALUE (?, ?, ?)`;
       db.query(sql, result, (err, res) => {
         if (err) throw err;
-
-        console.log(result);
+        for (let i = 0; i < result.length; i++) {
+          if (result[i].title === result.role) {
+            let res = result[i];
+            console.log(res);
+          }
+        }
         allDepartments();
       });
     });
