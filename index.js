@@ -172,7 +172,7 @@ const addRole = () => {
     ])
     .then((res) => {
       // Response from res
-      let result = res.newRole[result.role, result.salary, result.id];
+      let result = res.newRole[res.role, res.salary, res.id];
       let sql = `INSERT INTO role (title, salary, department_id)
       VALUE (?, ?, ?)`;
       db.query(sql, result, (err, res) => {
