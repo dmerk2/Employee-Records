@@ -169,12 +169,17 @@ const addRole = () => {
         type: "input",
         message: "What department will the work in?",
       },
+      {
+        name: "quit",
+        type: "confirm",
+        message: "Quit?",
+      },
     ])
     .then((res) => {
       // Response from res
       let result = res.newRole;
       let sql = `INSERT INTO role (title, salary, department_id)
-      VALUE ?`;
+      VALUES ?`;
       db.query(sql, result, (err, res) => {
         if (err) throw err;
 
@@ -185,22 +190,7 @@ const addRole = () => {
 };
 
 // Add a new employee
-// const addNewEmployee = async() => {
-//   console.log("Add a new Employee");
-//   let answer = inquirer
-//     .prompt([
-//       {
-//         type: "input",
-//         message: "What is the new employees name?",
-//       },
-//     ])
-//     .then((res) => {
-//       // Response from res
-//       let result = res;
-//       console.log(answer);
-//       console.log(result);
-//       return addNewEmployee(result);
-//     });
+// const addNewEmployee = () => {
 // };
 
 // Update an employees role
@@ -208,6 +198,7 @@ const updateRole = () => {
   console.log("Update an employees role");
 };
 
+// Quit the application
 const quit = () => {
   if ("Quit") {
     process.exit();
