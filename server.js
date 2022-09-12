@@ -90,7 +90,7 @@ const startQuestions = () => {
 const allDepartments = () => {
   console.log("Department View");
   let query = "SELECT * FROM department";
-  db.query(query, function (err, res) {
+  db.query(query, (err, res) => {
     let departmentArray = [];
     // Push all departments to deparments array
     res.forEach((department) => departmentArray.push(department));
@@ -104,7 +104,7 @@ const allDepartments = () => {
 const allRoles = () => {
   console.log("All roles");
   let query = "SELECT * FROM role";
-  db.query(query, function (err, res) {
+  db.query(query, (err, res) => {
     let allRolesArray = [];
     res.forEach((role) => allRolesArray.push(role));
     console.table(allRolesArray);
@@ -116,7 +116,7 @@ const allRoles = () => {
 const allEmployees = () => {
   console.log("All employees");
   let query = "SELECT * FROM employee";
-  db.query(query, function (err, res) {
+  db.query(query, (err, res) => {
     let employeeArray = [];
     res.forEach((employee) => employeeArray.push(employee));
     console.table(employeeArray);
@@ -167,14 +167,51 @@ const addRole = () => {
       {
         name: "departmentID",
         type: "input",
-        message: "What department will the work in?",
+        message: "What department will the new employee the work in?",
+      },
+    ])
+    
+    .then((res) => {
+      let sql = `INSERT INTO role (title, salary, department_id) 
+      VALUES (?, ?, ?);`;
+
+      db.query(sql, [res.newRole, Number(res.salary), Number(res.departmentID)], (err, res) => {
+        if (err) throw err;
+        allDepartments();
+      });
+    });
+};
+
+// Add a new employee
+const addNewEmployee = () => {
+  console.log("Add a new Employee");
+  inquirer
+    .prompt([
+      {
+        name: "first_name",
+        type: "input",
+        message: "What is the employees first name?",
+      },
+      {
+        name: "last_name",
+        type: "input",
+        message: "What is the employees last name?",
+      },
+      {
+        name: "role",
+        type: "input",
+        message: "What is the employees role",
+      },
+      {
+        name: "manager",
+        type: "input",
+        message: "Who is the employees manager?",
       },
     ])
     .then((res) => {
       // Response from res
-      let result = res.newRole;
-      let sql = `INSERT INTO role (title, salary, department_id)
-      VALUE (?,?,?)`;
+      let result = res.addNewEmployee;
+      let sql = ``;
       db.query(sql, result, (err, res) => {
         if (err) throw err;
 
@@ -184,45 +221,14 @@ const addRole = () => {
     });
 };
 
-// Add a new employee
-const addNewEmployee = () => {
-  console.log("Add a new Employee");
-  inquirer.prompt([
-    {
-      name: "first_name",
-      type: "input",
-      message: "What is the employees first name?",
-    },
-    {
-      name: "last_name",
-      type: "input",
-      message: "What is the employees last name?",
-    },
-    {
-      name: "role",
-      type: "input",
-      message: "What is the employees role",
-    },
-    {
-      name: "manager",
-      type: "name",
-      message: "Who is the employees manager?",
-    },
-  ]);
-  then((res) => {
-    let result = res.addNewEmployee;
-    let sql = ``;
-    db.query(sql, result, (err, res) => {
-      if (err) throw err;
-      allDepartments();
-    });
-  });
-};
-
 // Update an employees role
-const updateRole = () => {
-  console.log("Update an employees role");
-};
+// const updateRole = () => {
+//   console.log("Update an employees role");
+//   inquirer.prompt([
+//     name: "employee",
+//     type: ""
+//   ])
+// };
 
 // Quit the application
 const quit = () => {
