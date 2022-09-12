@@ -139,7 +139,7 @@ const addNewDepartment = () => {
       // Response from res
       let result = res.newDepartment;
       let sql = `INSERT INTO department (department_name)
-                VALUES (?)`;
+                VALUES ?`;
       db.query(sql, result, (err, res) => {
         if (err) throw err;
 
@@ -172,32 +172,52 @@ const addRole = () => {
     ])
     .then((res) => {
       // Response from res
-      let result = res.newRole[(res.role, res.salary, res.id)];
-      const sql = `SELECT role.title, employee.id, employee.first_name, employee.last_name, department.id AS department
-    FROM employee
-    LEFT JOIN role ON (role.id = employee.role_id)
-    LEFT JOIN department ON department.id = role.department_id
-    ORDER BY role.title;`;
-      // let sql = `SELECT role.res.role AS role, res.salary FROM role LEFT JOIN role ON res.department_id = role.id ORDER BY role.title;`;
-      // `INSERT INTO role (title, salary, department_id)
-      // VALUE (?, ?, ?)`;
+      let result = res.newRole;
+      let sql = `INSERT INTO role (title, salary, department_id)
+      VALUE (?,?,?)`;
       db.query(sql, result, (err, res) => {
         if (err) throw err;
 
-        for (let i = 0; i < result.length; i++) {
-          if (result[i].title === result.role) {
-            let res = result[i];
-            console.log(res);
-          }
-        }
+        console.log(result);
         allDepartments();
       });
     });
 };
 
 // Add a new employee
-// const addNewEmployee = () => {
-// };
+const addNewEmployee = () => {
+  console.log("Add a new Employee");
+  inquirer.prompt([
+    {
+      name: "first_name",
+      type: "input",
+      message: "What is the employees first name?",
+    },
+    {
+      name: "last_name",
+      type: "input",
+      message: "What is the employees last name?",
+    },
+    {
+      name: "role",
+      type: "input",
+      message: "What is the employees role",
+    },
+    {
+      name: "manager",
+      type: "name",
+      message: "Who is the employees manager?",
+    },
+  ]);
+  then((res) => {
+    let result = res.addNewEmployee;
+    let sql = ``;
+    db.query(sql, result, (err, res) => {
+      if (err) throw err;
+      allDepartments();
+    });
+  });
+};
 
 // Update an employees role
 const updateRole = () => {
