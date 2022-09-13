@@ -46,6 +46,7 @@ const startQuestions = () => {
           "Add a role",
           "Add an employee",
           "Update employee role",
+          "Delete employee",
           "Quit",
         ],
       },
@@ -73,15 +74,17 @@ const startQuestions = () => {
         case "Add a role":
           addRole();
           break;
-        case "Add new employee":
+        case "Add an employee":
           addNewEmployee();
           break;
         case "Update employee role":
           updateRole();
+        case "Delete Employee":
+          deleteEmployee();
         case "Quit":
           quit();
-        default:
-          "You choose an option";
+        default: 
+          allDepartments();
       }
     });
 };
@@ -130,20 +133,20 @@ const addNewDepartment = () => {
   inquirer
     .prompt([
       {
-        name: "newDepartment",
+        name: "department_name",
         type: "input",
         message: "What department would you like to add?",
       },
     ])
     .then((res) => {
-      // Response from res
-      let result = res.newDepartment;
-      let sql = `INSERT INTO department (department_name)
-                VALUES ?`;
-      db.query(sql, result, (err, res) => {
-        if (err) throw err;
 
-        console.log(result);
+      // console.log(res);
+      let sql = `INSERT INTO department (department_name) VALUES (?);`;
+      db.query(sql, [res.department_name], (err, res) => {
+        if (err) throw err;
+        
+        console.log("Successfully added a new department!");
+        console.log(res);
         allDepartments();
       });
     });
@@ -170,23 +173,27 @@ const addRole = () => {
         message: "What department will the new employee the work in?",
       },
     ])
-    
+
     .then((res) => {
       let sql = `INSERT INTO role (title, salary, department_id) 
       VALUES (?, ?, ?);`;
 
-      db.query(sql, [res.newRole, Number(res.salary), Number(res.departmentID)], (err, res) => {
-        if (err) throw err;
-        allDepartments();
-      });
+      db.query(
+        sql,
+        [res.newRole, Number(res.salary), Number(res.departmentID)],
+        (err, res) => {
+          console.log("Successfully added a new role!");
+          if (err) throw err;
+          allDepartments();
+        }
+      );
     });
 };
 
 // Add a new employee
 const addNewEmployee = () => {
   console.log("Add a new Employee");
-  inquirer
-    .prompt([
+  inquirer.prompt([
       {
         name: "first_name",
         type: "input",
@@ -206,29 +213,99 @@ const addNewEmployee = () => {
         name: "manager",
         type: "input",
         message: "Who is the employees manager?",
-      },
+      }
     ])
     .then((res) => {
-      // Response from res
-      let result = res.addNewEmployee;
-      let sql = ``;
-      db.query(sql, result, (err, res) => {
-        if (err) throw err;
+      let sql = `INSERT INTO employee (first_name, last_name, role_id, manager_id) 
+      VALUES (?, ?, ?, ?);`;
 
-        console.log(result);
-        allDepartments();
-      });
+      db.query(
+        sql,
+        [res.first_name, res.last_name, Number(res.role), Number(res.manager)],
+        (err, res) => {
+          if (err) throw err;
+          allDepartments();
+        }
+      );
     });
 };
 
 // Update an employees role
-// const updateRole = () => {
-//   console.log("Update an employees role");
-//   inquirer.prompt([
-//     name: "employee",
-//     type: ""
-//   ])
-// };
+const updateRole = () => {
+  console.log("Update an employees role");
+
+  let query1 = "SELECT * FROM employee;";
+  // This is an Async Opertaion
+  db.query(query1, (err, res) => {
+    if(err) throw err;
+    let employeeArray = [];
+    console.log(res)
+    res.forEach((employee) => employeeArray.push(employee));
+    //console.table(employeeArray);
+    console.log(employeeArray); // we need to know if we have the whole object or if we have the just the NAme
+    // we might need to puill out the first_name and last_name
+    inquirer
+      .prompt([
+        {
+          name: "employee_name",
+          type: "list",
+          message: "Which employee would you like to update?",
+          choices: []
+        },
+        {
+          name: "new_role",
+          type: "list",
+          choices: ["Manager", "Engineer", "Intern", "Quit"],
+        },
+      ])
+      .then((response) => {
+        console.log(response);
+        let answer = response.new_role;
+  
+        switch (answer) {
+          case "Manager":
+            allDepartments();
+            break;
+          case "Engineer":
+            allDepartments();
+            break;
+          case "Intern":
+            allDepartments();
+            break;
+          case "Quit":
+            allDepartments();
+            break;
+        }
+        // if ("new_role" === "Manager") {
+        //   console.log("Manager");
+        // } else if ("new_role" === "Engineer") {
+        //   console.log("Engineer");
+        // } else if ("new_role" === "Intern") {
+        //   console.log();
+        // } else {
+        //   quit();
+        // }
+      });
+  });
+
+};
+
+// Delete Employee
+const deleteEmployee = () => {
+  inquirer.prompt[
+    {
+      name: "delete_employee",
+      type: "list",
+      message: "Which employee would you like to delete?",
+      choices: [],
+    }
+  ].then((res) => {
+    let sql = "DELETE FROM employee WHERE ?";
+    db.query(sql, [res.delete_employee], (err) => {
+      if (err) throw err;
+    });
+  });
+};
 
 // Quit the application
 const quit = () => {
