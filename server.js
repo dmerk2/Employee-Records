@@ -76,10 +76,13 @@ const startQuestions = () => {
           break;
         case "Update employee role":
           updateRole(res);
+          break;
         case "Delete Employee":
           deleteEmployee(res);
+          break;
         case "View Employees by Manager":
           viewEmployeesByManager();
+          break;
         case "Quit":
           quit();
         default:
@@ -182,9 +185,9 @@ const addRole = () => {
         (err, res) => {
           console.log("Successfully added a new role!");
           if (err) throw err;
-          allDepartments();
         }
       );
+      allRoles();
     });
 };
 
@@ -223,7 +226,7 @@ const addNewEmployee = () => {
         [res.first_name, res.last_name, Number(res.role), Number(res.manager)],
         (err, res) => {
           if (err) throw err;
-          allDepartments();
+          allEmployees();
         }
       );
     });
@@ -236,22 +239,21 @@ const viewEmployeesByManager = () => {
     if (err) throw err;
     let employeeArray = [];
     res.forEach((employee) => employeeArray.push(employee));
-    console.log(employeeArray)
+    console.log(employeeArray);
     inquirer
       .prompt([
         {
           name: "employee_manager",
           type: "list",
-          message: "Which employee do you want to select??",
+          message: "Which employee do you want to select?",
           choices: employeeArray,
         },
       ])
       .then((res) => {
         console.table(employeeArray);
       });
-
-    startQuestions();
   });
+  startQuestions();
 };
 
 // View all employees
@@ -262,9 +264,27 @@ JOIN role ON employee.role_id = role.id;`;
   console.log("Update an employees role id?");
   // console.log(res);
   db.query(query, (err, res) => {
-    let roleArray = [];
-    res.forEach((role) => roleArray.push(role));
     console.table(roleArray);
+    db.query(query, (err, res) => {
+      if (err) throw err;
+      let roleArray = [];
+      res.forEach((role) => roleArray.push(role));
+      console.log(employeeArray);
+      inquirer
+        .prompt([
+          {
+            name: "employee_manager",
+            type: "list",
+            message: "Which employee do you want to select?",
+            choices: employeeArray,
+          },
+        ])
+        .then((res) => {
+          console.table(employeeArray);
+        });
+
+      startQuestions();
+    });
     inquirer
       .prompt([
         {
@@ -296,6 +316,8 @@ JOIN role ON employee.role_id = role.id;`;
           case "Quit":
             allDepartments();
             break;
+          default:
+            allDepartments();
         }
       });
     allRoles();
