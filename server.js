@@ -40,6 +40,7 @@ const startQuestions = () => {
           "Add a department",
           "Add a role",
           "Add an employee",
+          "View Employees by Manager",
           "Update employee role",
           "Delete employee",
           "Quit",
@@ -76,6 +77,8 @@ const startQuestions = () => {
           updateRole();
         case "Delete Employee":
           deleteEmployee();
+        case "View Employees by Manager":
+          viewEmployeesByManager();
         case "Quit":
           quit();
         default:
@@ -178,7 +181,7 @@ const addRole = () => {
         (err, res) => {
           console.log("Successfully added a new role!");
           if (err) throw err;
-          allDepartments();
+          allRoles();
         }
       );
     });
@@ -219,20 +222,39 @@ const addNewEmployee = () => {
         [res.first_name, res.last_name, Number(res.role), Number(res.manager)],
         (err, res) => {
           if (err) throw err;
-          allDepartments();
+          allEmployees();
         }
       );
     });
+};
+
+const viewEmployeesByManager = () => {
+  console.log("Which employee would you see their managers ID?");
+  const query = "SELECT * FROM employee ORDER BY manager_id DESC";
+  db.query(query, (err, res) => {
+    if (err) throw err;
+    inquirer.prompt([
+      {
+        name: "employee_manager",
+        type: "list",
+        message: "Which employee do you want to select?",
+        choices: employeeArray
+      },
+    ]);
+    console.table(res);
+  });
+
+  startQuestions();
 };
 
 // Update an employees role
 const updateRole = () => {
   console.log("Update an employees role id?");
 
-  let query1 = `SELECT * FROM employees
+  let query = `SELECT * FROM employees
 JOIN role ON employee.role_id = role.id;`
   // This is an Async Opertaion
-  db.query(query1, (res, err) => {
+  db.query(query, (res, err) => {
     if (err) throw err;
     let employeeArray = [];
     console.log(res);
