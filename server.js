@@ -181,7 +181,7 @@ const addRole = () => {
         (err, res) => {
           console.log("Successfully added a new role!");
           if (err) throw err;
-          allRoles();
+          allDepartments();
         }
       );
     });
@@ -222,7 +222,7 @@ const addNewEmployee = () => {
         [res.first_name, res.last_name, Number(res.role), Number(res.manager)],
         (err, res) => {
           if (err) throw err;
-          allEmployees();
+          allDepartments();
         }
       );
     });
@@ -233,42 +233,40 @@ const viewEmployeesByManager = () => {
   const query = "SELECT * FROM employee ORDER BY manager_id DESC";
   db.query(query, (err, res) => {
     if (err) throw err;
-    inquirer.prompt([
-      {
-        name: "employee_manager",
-        type: "list",
-        message: "Which employee do you want to select?",
-        choices: employeeArray
-      },
-    ]);
-    console.table(res);
-  });
+    inquirer
+      .prompt([
+        {
+          name: "employee_manager",
+          type: "list",
+          message: "Which employee do you want to select??",
+          choices: employeeArray,
+        },
+      ])
+      .then((res) => {
+        console.table(employeeArray);
+      });
 
-  startQuestions();
+    startQuestions();
+  });
 };
 
-// Update an employees role
+// View all employees
 const updateRole = () => {
-  console.log("Update an employees role id?");
-
+  console.log("All Roles");
   let query = `SELECT * FROM employees
-JOIN role ON employee.role_id = role.id;`
-  // This is an Async Opertaion
-  db.query(query, (res, err) => {
-    if (err) throw err;
-    let employeeArray = [];
-    console.log(res);
-    res.forEach((employee) => employeeArray.push(employee));
-    console.table(employeeArray);
-    console.log(employeeArray); // we need to know if we have the whole object or if we have the just the NAme
-    // we might need to puill out the first_name and last_name
+JOIN role ON employee.role_id = role.id;`;
+  console.log("Update an employees role id?");
+  db.query(query, (err, res) => {
+    let roleArray = [];
+    res.forEach((role) => roleArray.push(role));
+    console.table(roleArray);
     inquirer
       .prompt([
         {
           name: "employee_name",
           type: "list",
           message: "Which employee would you like to update?",
-          choices: employeeArray,
+          choices: roleArray,
         },
         {
           name: "new_role",
@@ -295,24 +293,84 @@ JOIN role ON employee.role_id = role.id;`
             break;
         }
       });
+    allRoles();
   });
 };
 
+// Update an employees role
+// const updateRole = () => {
+//   let query = `SELECT * FROM employees
+// JOIN role ON employee.role_id = role.id;`;
+//   console.log("Update an employees role id?");
+
+//   // This is an Async Opertaion
+//   db.query(query, (res, err) => {
+//     if (err) throw err;
+//     let employeeArray = [];
+//     console.log(res);
+//     res.forEach((employee) => employeeArray.push(employee));
+//     console.table(employeeArray);
+//     console.log(employeeArray); // we need to know if we have the whole object or if we have the just the NAme
+//     // we might need to puill out the first_name and last_name
+//     inquirer
+//       .prompt([
+//         {
+//           name: "employee_name",
+//           type: "list",
+//           message: "Which employee would you like to update?",
+//           choices: employeeArray,
+//         },
+//         {
+//           name: "new_role",
+//           type: "list",
+//           choices: ["Manager", "Engineer", "Intern", "Quit"],
+//         },
+//       ])
+//       .then((response) => {
+//         console.log(response);
+//         let answer = response.new_role;
+
+//         switch (answer) {
+//           case "Manager":
+//             allDepartments();
+//             break;
+//           case "Engineer":
+//             allDepartments();
+//             break;
+//           case "Intern":
+//             allDepartments();
+//             break;
+//           case "Quit":
+//             allDepartments();
+//             break;
+//         }
+//       });
+//   });
+// };
+
 // Delete Employee
 const deleteEmployee = () => {
+  let employeeArray = [];
+  console.log(res);
+  res.forEach((employee) => employeeArray.push(employee));
+  console.log(employee)
+  console.table(employeeArray);
+  console.log(employeeArray);
   inquirer
     .prompt([
       {
         name: "delete_employee",
         type: "list",
         message: "Which employee would you like to delete?",
-        choices: [],
+        choices: employeeArray,
       },
     ])
     .then((res) => {
       let sql = "DELETE FROM employee WHERE ?";
       db.query(sql, [res.delete_employee], (err) => {
         if (err) throw err;
+        console.table(employeeArray);
+        console.log(employeeArray);
       });
     });
 };
