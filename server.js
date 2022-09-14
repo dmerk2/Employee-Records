@@ -49,6 +49,7 @@ const startQuestions = () => {
     ])
     .then((res) => {
       let answer = res.title;
+      console.log(res);
 
       // Call individual functions for user interactions
       switch (answer) {
@@ -230,9 +231,12 @@ const addNewEmployee = () => {
 
 const viewEmployeesByManager = () => {
   console.log("Which employee would you see their managers ID?");
-  const query = "SELECT * FROM employee ORDER BY manager_id DESC";
+  const query = "SELECT * FROM employee ORDER BY manager_id DESC;";
   db.query(query, (err, res) => {
     if (err) throw err;
+    let employeeArray = [];
+    res.forEach((employee) => employeeArray.push(employee));
+    console.log(employeeArray)
     inquirer
       .prompt([
         {
@@ -256,7 +260,7 @@ const updateRole = () => {
   let query = `SELECT * FROM employees
 JOIN role ON employee.role_id = role.id;`;
   console.log("Update an employees role id?");
-  console.log(res);
+  // console.log(res);
   db.query(query, (err, res) => {
     let roleArray = [];
     res.forEach((role) => roleArray.push(role));
@@ -275,9 +279,9 @@ JOIN role ON employee.role_id = role.id;`;
           choices: ["Manager", "Engineer", "Intern", "Quit"],
         },
       ])
-      .then((response) => {
-        console.log(response);
-        let answer = response.new_role;
+      .then((res) => {
+        console.log(res);
+        let answer = res.new_role;
 
         switch (answer) {
           case "Manager":
@@ -350,33 +354,74 @@ JOIN role ON employee.role_id = role.id;`;
 // };
 
 // Delete Employee
-const deleteEmployee = (res) => {
-  let employeeArray = [];
+// const deleteEmployee = (res) => {
+//   let employeeArray = [];
 
-  console.log(res);
-  res.forEach((employee) => employeeArray.push(employee));
-  console.log(employee);
-  console.log(deleteEmployee);
-  console.table(employeeArray);
-  console.log(employeeArray);
-  inquirer
-    .prompt([
-      {
-        name: "delete_employee",
-        type: "list",
-        message: "Which employee would you like to delete?",
-        choices: employeeArray,
-      },
-    ])
-    .then((res) => {
-      let sql = "DELETE FROM employee WHERE ?";
+//   console.log(res);
+//   res.forEach((employee) => employeeArray.push(employee));
+//   console.log(employee);
+//   console.log(deleteEmployee);
+//   console.table(employeeArray);
+//   console.log(employeeArray);
+//   inquirer
+//     .prompt([
+//       {
+//         name: "delete_employee",
+//         type: "list",
+//         message: "Which employee would you like to delete?",
+//         choices: employeeArray,
+//       },
+//     ])
+//     .then((res) => {
+//       let sql = "DELETE FROM employee WHERE ?";
 
-      db.query(sql, [res.delete_employee], (err) => {
-        if (err) throw err;
-        console.table(employeeArray);
-        console.log(employeeArray);
-      });
+//       db.query(sql, [res.delete_employee], (err) => {
+//         if (err) throw err;
+//         console.table(employeeArray);
+//         console.log(employeeArray);
+//       });
+//     });
+// };
+// Delete an Employee
+const deleteEmployee = () => {
+  let sql = `SELECT employee.id, employee.first_name, employee.last_name FROM employee`;
+
+  db.query(sql, (err, res) => {
+    if (err) throw err;
+    let employeeNamesArray = [];
+    res.forEach((employee) => {
+      employeeNamesArray.push(`${employee.first_name} ${employee.last_name}`);
     });
+
+    inquirer
+      .prompt([
+        {
+          name: "chosenEmployee",
+          type: "list",
+          message: "Which employee would you like to remove?",
+          choices: employeeNamesArray,
+        },
+      ])
+      .then((res) => {
+        let employeeId;
+
+        res.forEach((employee) => {
+          if (
+            res.chosenEmployee ===
+            `${employee.first_name} ${employee.last_name}`
+          ) {
+            employeeId = employee.id;
+          }
+        });
+
+        let sql = `DELETE FROM employee WHERE employee.id = (?);`;
+        db.query(sql, [res.employeeId], (err) => {
+          if (err) throw err;
+          console.log(`Employee Successfully Removed`);
+          allEmployees();
+        });
+      });
+  });
 };
 
 // Quit the application

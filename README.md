@@ -52,7 +52,11 @@ THEN I am prompted to select an employee to update and their new role and this i
 
 ```md
 Installation instructions:
-node.js, express.js, mysql2, console.table
+git clone <repo-name>
+npm init -y
+npm install
+mysql -u root -p inside of schema.db file
+npm start
 ```
 
 ## Walkthrough Video
