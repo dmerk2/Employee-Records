@@ -60,7 +60,7 @@ npm start
 ```
 
 ## Walkthrough Video
-
+ 
 ---
 
 [![Walkthrough Video](./Assets/12-sql-homework-video-thumbnail.png)](https://2u-20.wistia.com/medias/2lnle7xnpk)
