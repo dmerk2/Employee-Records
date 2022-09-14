@@ -42,14 +42,14 @@ const startQuestions = () => {
           "Add an employee",
           "View Employees by Manager",
           "Update employee role",
-          "Delete employee",
+          // "Delete employee",
           "Quit",
         ],
       },
     ])
     .then((res) => {
       let answer = res.title;
-      console.log(res);
+      // console.log(res);
 
       // Call individual functions for user interactions
       switch (answer) {
@@ -75,16 +75,17 @@ const startQuestions = () => {
           addNewEmployee();
           break;
         case "Update employee role":
-          updateRole(res);
+          updateRole();
           break;
-        case "Delete Employee":
-          deleteEmployee(res);
-          break;
+        // case "Delete Employee":
+        //   deleteEmployee();
+        //   break;
         case "View Employees by Manager":
           viewEmployeesByManager();
           break;
         case "Quit":
           quit();
+          break;
         default:
           allDepartments();
       }
@@ -97,9 +98,7 @@ const allDepartments = () => {
   let query = "SELECT * FROM department";
   db.query(query, (err, res) => {
     let departmentArray = [];
-    // Push all departments to deparments array
     res.forEach((department) => departmentArray.push(department));
-    // View all departments in console.table
     console.table(departmentArray);
     startQuestions();
   });
@@ -141,13 +140,9 @@ const addNewDepartment = () => {
       },
     ])
     .then((res) => {
-      // console.log(res);
       let sql = `INSERT INTO department (department_name) VALUES (?);`;
       db.query(sql, [res.department_name], (err, res) => {
         if (err) throw err;
-
-        console.log("Successfully added a new department!");
-        console.log(res);
         allDepartments();
       });
     });
@@ -183,11 +178,10 @@ const addRole = () => {
         sql,
         [res.newRole, Number(res.salary), Number(res.departmentID)],
         (err, res) => {
-          console.log("Successfully added a new role!");
           if (err) throw err;
+          allRoles();
         }
       );
-      allRoles();
     });
 };
 
@@ -239,7 +233,7 @@ const viewEmployeesByManager = () => {
     if (err) throw err;
     let employeeArray = [];
     res.forEach((employee) => employeeArray.push(employee));
-    console.log(employeeArray);
+    // console.log(employeeArray);
     inquirer
       .prompt([
         {
@@ -248,59 +242,49 @@ const viewEmployeesByManager = () => {
           message: "Which employee do you want to select?",
           choices: employeeArray,
         },
+        {
+          name: "new_role",
+          type: "list",
+          message: "What new role would you like to be assigned?",
+          choices: ["Manager", "Engineer", "Intern", "Done"],
+        },
       ])
       .then((res) => {
         console.table(employeeArray);
       });
   });
-  startQuestions();
+  allEmployees();
 };
 
 // View all employees
 const updateRole = () => {
   console.log("All Roles");
-  let query = `SELECT * FROM employees
-JOIN role ON employee.role_id = role.id;`;
+  let query = `SELECT * FROM employee ORDER BY manager_id DESC;`;
   console.log("Update an employees role id?");
-  // console.log(res);
   db.query(query, (err, res) => {
+    if (err) throw err;
+    let roleArray = [];
+    res.forEach((role) => roleArray.push(role));
     console.table(roleArray);
-    db.query(query, (err, res) => {
-      if (err) throw err;
-      let roleArray = [];
-      res.forEach((role) => roleArray.push(role));
-      console.log(employeeArray);
-      inquirer
-        .prompt([
-          {
-            name: "employee_manager",
-            type: "list",
-            message: "Which employee do you want to select?",
-            choices: employeeArray,
-          },
-        ])
-        .then((res) => {
-          console.table(employeeArray);
-        });
-
-      startQuestions();
-    });
     inquirer
       .prompt([
         {
-          name: "employee_name",
+          name: "employee_manager",
           type: "list",
-          message: "Which employee would you like to update?",
+          message: "Which employee do you want to select?",
           choices: roleArray,
         },
         {
           name: "new_role",
           type: "list",
+          message: "What role will they be assigned to?",
           choices: ["Manager", "Engineer", "Intern", "Quit"],
         },
       ])
       .then((res) => {
-        console.log(res);
+        console.table(roleArray);
+
+        // console.log(res);
         let answer = res.new_role;
 
         switch (answer) {
@@ -320,90 +304,10 @@ JOIN role ON employee.role_id = role.id;`;
             allDepartments();
         }
       });
+    });
     allRoles();
-  });
 };
 
-// Update an employees role
-// const updateRole = () => {
-//   let query = `SELECT * FROM employees
-// JOIN role ON employee.role_id = role.id;`;
-//   console.log("Update an employees role id?");
-
-//   // This is an Async Opertaion
-//   db.query(query, (res, err) => {
-//     if (err) throw err;
-//     let employeeArray = [];
-//     console.log(res);
-//     res.forEach((employee) => employeeArray.push(employee));
-//     console.table(employeeArray);
-//     console.log(employeeArray); // we need to know if we have the whole object or if we have the just the NAme
-//     // we might need to puill out the first_name and last_name
-//     inquirer
-//       .prompt([
-//         {
-//           name: "employee_name",
-//           type: "list",
-//           message: "Which employee would you like to update?",
-//           choices: employeeArray,
-//         },
-//         {
-//           name: "new_role",
-//           type: "list",
-//           choices: ["Manager", "Engineer", "Intern", "Quit"],
-//         },
-//       ])
-//       .then((response) => {
-//         console.log(response);
-//         let answer = response.new_role;
-
-//         switch (answer) {
-//           case "Manager":
-//             allDepartments();
-//             break;
-//           case "Engineer":
-//             allDepartments();
-//             break;
-//           case "Intern":
-//             allDepartments();
-//             break;
-//           case "Quit":
-//             allDepartments();
-//             break;
-//         }
-//       });
-//   });
-// };
-
-// Delete Employee
-// const deleteEmployee = (res) => {
-//   let employeeArray = [];
-
-//   console.log(res);
-//   res.forEach((employee) => employeeArray.push(employee));
-//   console.log(employee);
-//   console.log(deleteEmployee);
-//   console.table(employeeArray);
-//   console.log(employeeArray);
-//   inquirer
-//     .prompt([
-//       {
-//         name: "delete_employee",
-//         type: "list",
-//         message: "Which employee would you like to delete?",
-//         choices: employeeArray,
-//       },
-//     ])
-//     .then((res) => {
-//       let sql = "DELETE FROM employee WHERE ?";
-
-//       db.query(sql, [res.delete_employee], (err) => {
-//         if (err) throw err;
-//         console.table(employeeArray);
-//         console.log(employeeArray);
-//       });
-//     });
-// };
 // Delete an Employee
 const deleteEmployee = () => {
   let sql = `SELECT employee.id, employee.first_name, employee.last_name FROM employee`;
@@ -412,7 +316,7 @@ const deleteEmployee = () => {
     if (err) throw err;
     let employeeNamesArray = [];
     res.forEach((employee) => {
-      employeeNamesArray.push(`${employee.first_name} ${employee.last_name}`);
+      employeeNamesArray.push(employee);
     });
 
     inquirer
