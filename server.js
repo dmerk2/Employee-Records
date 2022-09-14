@@ -3,11 +3,6 @@ const inquirer = require("inquirer");
 const mysql = require("mysql2");
 
 const PORT = process.env.PORT || 3001;
-const app = express();
-
-// Middleware
-app.use(express.urlencoded({ extended: false }));
-app.use(express.json());
 
 // Connection to mysql
 const db = mysql.createConnection(
@@ -83,7 +78,7 @@ const startQuestions = () => {
           deleteEmployee();
         case "Quit":
           quit();
-        default: 
+        default:
           allDepartments();
       }
     });
@@ -139,12 +134,11 @@ const addNewDepartment = () => {
       },
     ])
     .then((res) => {
-
       // console.log(res);
       let sql = `INSERT INTO department (department_name) VALUES (?);`;
       db.query(sql, [res.department_name], (err, res) => {
         if (err) throw err;
-        
+
         console.log("Successfully added a new department!");
         console.log(res);
         allDepartments();
@@ -170,7 +164,7 @@ const addRole = () => {
       {
         name: "departmentID",
         type: "input",
-        message: "What department will the new employee the work in?",
+        message: "What department ID will the new employee the work in?",
       },
     ])
 
@@ -193,7 +187,8 @@ const addRole = () => {
 // Add a new employee
 const addNewEmployee = () => {
   console.log("Add a new Employee");
-  inquirer.prompt([
+  inquirer
+    .prompt([
       {
         name: "first_name",
         type: "input",
@@ -207,13 +202,13 @@ const addNewEmployee = () => {
       {
         name: "role",
         type: "input",
-        message: "What is the employees role",
+        message: "What is the employees role ID",
       },
       {
         name: "manager",
         type: "input",
-        message: "Who is the employees manager?",
-      }
+        message: "What is their managers ID?",
+      },
     ])
     .then((res) => {
       let sql = `INSERT INTO employee (first_name, last_name, role_id, manager_id) 
@@ -232,16 +227,17 @@ const addNewEmployee = () => {
 
 // Update an employees role
 const updateRole = () => {
-  console.log("Update an employees role");
+  console.log("Update an employees role id?");
 
-  let query1 = "SELECT * FROM employee;";
+  let query1 = `SELECT * FROM employees
+JOIN role ON employee.role_id = role.id;`
   // This is an Async Opertaion
-  db.query(query1, (err, res) => {
-    if(err) throw err;
+  db.query(query1, (res, err) => {
+    if (err) throw err;
     let employeeArray = [];
-    console.log(res)
+    console.log(res);
     res.forEach((employee) => employeeArray.push(employee));
-    //console.table(employeeArray);
+    console.table(employeeArray);
     console.log(employeeArray); // we need to know if we have the whole object or if we have the just the NAme
     // we might need to puill out the first_name and last_name
     inquirer
@@ -250,7 +246,7 @@ const updateRole = () => {
           name: "employee_name",
           type: "list",
           message: "Which employee would you like to update?",
-          choices: []
+          choices: employeeArray,
         },
         {
           name: "new_role",
@@ -261,7 +257,7 @@ const updateRole = () => {
       .then((response) => {
         console.log(response);
         let answer = response.new_role;
-  
+
         switch (answer) {
           case "Manager":
             allDepartments();
@@ -276,35 +272,27 @@ const updateRole = () => {
             allDepartments();
             break;
         }
-        // if ("new_role" === "Manager") {
-        //   console.log("Manager");
-        // } else if ("new_role" === "Engineer") {
-        //   console.log("Engineer");
-        // } else if ("new_role" === "Intern") {
-        //   console.log();
-        // } else {
-        //   quit();
-        // }
       });
   });
-
 };
 
 // Delete Employee
 const deleteEmployee = () => {
-  inquirer.prompt[
-    {
-      name: "delete_employee",
-      type: "list",
-      message: "Which employee would you like to delete?",
-      choices: [],
-    }
-  ].then((res) => {
-    let sql = "DELETE FROM employee WHERE ?";
-    db.query(sql, [res.delete_employee], (err) => {
-      if (err) throw err;
+  inquirer
+    .prompt([
+      {
+        name: "delete_employee",
+        type: "list",
+        message: "Which employee would you like to delete?",
+        choices: [],
+      },
+    ])
+    .then((res) => {
+      let sql = "DELETE FROM employee WHERE ?";
+      db.query(sql, [res.delete_employee], (err) => {
+        if (err) throw err;
+      });
     });
-  });
 };
 
 // Quit the application
@@ -313,8 +301,3 @@ const quit = () => {
     process.exit();
   }
 };
-
-// Starting server
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
