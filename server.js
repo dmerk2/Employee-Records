@@ -74,9 +74,9 @@ const startQuestions = () => {
           addNewEmployee();
           break;
         case "Update employee role":
-          updateRole();
+          updateRole(res);
         case "Delete Employee":
-          deleteEmployee();
+          deleteEmployee(res);
         case "View Employees by Manager":
           viewEmployeesByManager();
         case "Quit":
@@ -256,6 +256,7 @@ const updateRole = () => {
   let query = `SELECT * FROM employees
 JOIN role ON employee.role_id = role.id;`;
   console.log("Update an employees role id?");
+  console.log(res);
   db.query(query, (err, res) => {
     let roleArray = [];
     res.forEach((role) => roleArray.push(role));
@@ -349,11 +350,13 @@ JOIN role ON employee.role_id = role.id;`;
 // };
 
 // Delete Employee
-const deleteEmployee = () => {
+const deleteEmployee = (res) => {
   let employeeArray = [];
+
   console.log(res);
   res.forEach((employee) => employeeArray.push(employee));
-  console.log(employee)
+  console.log(employee);
+  console.log(deleteEmployee);
   console.table(employeeArray);
   console.log(employeeArray);
   inquirer
@@ -367,6 +370,7 @@ const deleteEmployee = () => {
     ])
     .then((res) => {
       let sql = "DELETE FROM employee WHERE ?";
+
       db.query(sql, [res.delete_employee], (err) => {
         if (err) throw err;
         console.table(employeeArray);
