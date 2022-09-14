@@ -8,7 +8,7 @@
     "start": "node server.js"
   },
   "keywords": [],
-  "author": "Daniel Merkin",
+  "author": "Daniel Merkin", 
   "license": "ISC",
   "dependencies": {
     "console.table": "^0.10.0",
