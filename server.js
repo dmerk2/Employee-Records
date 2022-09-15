@@ -222,7 +222,7 @@ const addNewEmployee = () => {
     });
 };
 
-// View all employees
+// View all employees by Manager
 const viewEmployeesByManager = () => {
   let query = "SELECT * FROM employee ORDER BY manager_id DESC;";
   db.query(query, (err, res) => {
@@ -233,144 +233,51 @@ const viewEmployeesByManager = () => {
   });
 };
 
-// Selection to update a roll for a specific employee.
+// Update Employee Role
 const updateRole = async () => {
-    try {
-        console.log('Employee Update');
-        
-        let employees = await db.query("SELECT * FROM employee");
-
-        let employeeSelection = await inquirer.prompt([
-            {
-                name: 'employee',
-                type: 'list',
-                choices: employees.map((employeeName) => {
-                    return {
-                        name: employeeName.first_name + " " + employeeName.last_name,
-                        value: employeeName.id
-                    }
-                }),
-                message: 'Please choose an employee to update.'
-            }
-        ]);
-
-        let roles = await db.query("SELECT * FROM role");
-
-        let roleSelection = await inquirer.prompt([
-            {
-                name: 'role',
-                type: 'list',
-                choices: roles.map((roleName) => {
-                    return {
-                        name: roleName.title,
-                        value: roleName.id
-                    }
-                }),
-                message: 'Please select the role to update the employee with.'
-            }
-        ]);
-
-        let result = await db.query("UPDATE employee SET ? WHERE ?", [{ role_id: roleSelection.role }, { id: employeeSelection.employee }]);
-
-        console.log(`The role was successfully updated.\n`);
-        startQuestions();
-
-    } catch (err) {
-        console.log(err);
-        startQuestions();
-    };
-}
-
-// View all employees
-// const updateRole = async () => {
-//   console.log("All Roles");
-//   let query = `SELECT * FROM employee ORDER BY manager_id DESC;`;
-//   console.log("Update an employees role id?");
-//   db.query(query, (err, res) => {
-//     if (err) throw err;
-//     let roleArray = [];
-//     res.forEach((role) => roleArray.push(role));
-//     console.table(roleArray);
-//     inquirer
-//       .prompt([
-//         {
-//           name: "employee_manager",
-//           type: "list",
-//           message: "Which employee do you want to select?",
-//           choices: roleArray,
-//         },
-//         {
-//           name: "new_role",
-//           type: "list",
-//           message: "What role will they be assigned to?",
-//           choices: ["Manager", "Engineer", "Intern", "Quit"],
-//         },
-//       ])
-//       .then((res) => {
-//         console.table(roleArray);
-
-//         // console.log(res);
-//         let answer = res.new_role;
-
-//         switch (answer) {
-//           case "Manager":
-//             allDepartments();
-//             break;
-//           case "Engineer":
-//             allDepartments();
-//             break;
-//           case "Intern":
-//             allDepartments();
-//             break;
-//           case "Quit":
-//             allDepartments();
-//             break;
-//           default:
-//             allDepartments();
-//         }
-//       });
-//   });
-//   await allRoles();
-// };
-
-// Delete an Employee
-const deleteEmployee = () => {
-  let sql = `SELECT employee.id, employee.first_name, employee.last_name FROM employee`;
-
-  db.query(sql, (err, res) => {
+  console.log("All Roles");
+  let query = `SELECT * FROM employee;`;
+  console.log("Update an employees role id");
+  db.query(query, (err, res) => {
     if (err) throw err;
-    let employeeNamesArray = [];
-    res.forEach((employee) => {
-      employeeNamesArray.push(employee);
-    });
-
+    let roleArray = [];
+    res.forEach((role) => roleArray.push(role));
+    // console.table(roleArray);
     inquirer
       .prompt([
         {
-          name: "chosenEmployee",
+          name: "employee_manager",
           type: "list",
-          message: "Which employee would you like to remove?",
-          choices: employeeNamesArray,
+          message: "Which employee do you want to select?",
+          choices: roleArray,
+        },
+        {
+          name: "new_role",
+          type: "list",
+          message: "What role will they be assigned to?",
+          choices: ["Manager", "Engineer", "Intern", "Quit"],
         },
       ])
       .then((res) => {
-        let employeeId;
+        // console.table(roleArray);
+        let answer = res.new_role;
 
-        res.forEach((employee) => {
-          if (
-            res.chosenEmployee ===
-            `${employee.first_name} ${employee.last_name}`
-          ) {
-            employeeId = employee.id;
-          }
-        });
-
-        let sql = `DELETE FROM employee WHERE employee.id = (?);`;
-        db.query(sql, [res.employeeId], (err) => {
-          if (err) throw err;
-          console.log(`Employee Successfully Removed`);
-          allEmployees();
-        });
+        switch (answer) {
+          case "Manager":
+            allRoles();
+            break;
+          case "Engineer":
+            allRoles();
+            break;
+          case "Intern":
+            allRoles();
+            break;
+          case "Quit":
+            allRoles();
+            break;
+          default:
+            allEmployees();
+        }
       });
   });
 };
