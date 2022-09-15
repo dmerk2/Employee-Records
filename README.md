@@ -55,12 +55,12 @@ Installation instructions:
 git clone <repo-name>
 npm init -y
 npm install
-mysql -u root -p inside of schema.db file
+*run terminal in schema.db* mysql -u root -p *enter password*
 npm start
 ```
 
 ## Walkthrough Video
- 
+
 ---
 
 [![Walkthrough Video](./Assets/12-sql-homework-video-thumbnail.png)](https://2u-20.wistia.com/medias/2lnle7xnpk)
