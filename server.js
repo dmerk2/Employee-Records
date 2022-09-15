@@ -10,7 +10,7 @@ const db = mysql.createConnection(
     host: "localhost",
     user: "root",
 
-    // Insert PLACEHOLDER password???
+    // PLACEHOLDER PASSWORD BEFORE SUBMISSION
     password: "Ultraatomicwebdesigns123#",
     database: "employees_db",
   },
@@ -42,7 +42,6 @@ const startQuestions = () => {
           "Add an employee",
           "View Employees by Manager",
           "Update employee role",
-          // "Delete employee",
           "Quit",
         ],
       },
@@ -77,9 +76,6 @@ const startQuestions = () => {
         case "Update employee role":
           updateRole();
           break;
-        // case "Delete Employee":
-        //   deleteEmployee();
-        //   break;
         case "View Employees by Manager":
           viewEmployeesByManager();
           break;
@@ -226,87 +222,116 @@ const addNewEmployee = () => {
     });
 };
 
+// View all employees
 const viewEmployeesByManager = () => {
-  console.log("Which employee would you see their managers ID?");
-  const query = "SELECT * FROM employee ORDER BY manager_id DESC;";
+  let query = "SELECT * FROM employee ORDER BY manager_id DESC;";
   db.query(query, (err, res) => {
-    if (err) throw err;
     let employeeArray = [];
     res.forEach((employee) => employeeArray.push(employee));
-    // console.log(employeeArray);
-    inquirer
-      .prompt([
-        {
-          name: "employee_manager",
-          type: "list",
-          message: "Which employee do you want to select?",
-          choices: employeeArray,
-        },
-        {
-          name: "new_role",
-          type: "list",
-          message: "What new role would you like to be assigned?",
-          choices: ["Manager", "Engineer", "Intern", "Done"],
-        },
-      ])
-      .then((res) => {
-        console.table(employeeArray);
-      });
+    console.table(employeeArray);
+    startQuestions();
   });
-  allEmployees();
 };
+
+// Selection to update a roll for a specific employee.
+const updateRole = async () => {
+    try {
+        console.log('Employee Update');
+        
+        let employees = await db.query("SELECT * FROM employee");
+
+        let employeeSelection = await inquirer.prompt([
+            {
+                name: 'employee',
+                type: 'list',
+                choices: employees.map((employeeName) => {
+                    return {
+                        name: employeeName.first_name + " " + employeeName.last_name,
+                        value: employeeName.id
+                    }
+                }),
+                message: 'Please choose an employee to update.'
+            }
+        ]);
+
+        let roles = await db.query("SELECT * FROM role");
+
+        let roleSelection = await inquirer.prompt([
+            {
+                name: 'role',
+                type: 'list',
+                choices: roles.map((roleName) => {
+                    return {
+                        name: roleName.title,
+                        value: roleName.id
+                    }
+                }),
+                message: 'Please select the role to update the employee with.'
+            }
+        ]);
+
+        let result = await db.query("UPDATE employee SET ? WHERE ?", [{ role_id: roleSelection.role }, { id: employeeSelection.employee }]);
+
+        console.log(`The role was successfully updated.\n`);
+        startQuestions();
+
+    } catch (err) {
+        console.log(err);
+        startQuestions();
+    };
+}
 
 // View all employees
-const updateRole = () => {
-  console.log("All Roles");
-  let query = `SELECT * FROM employee ORDER BY manager_id DESC;`;
-  console.log("Update an employees role id?");
-  db.query(query, (err, res) => {
-    if (err) throw err;
-    let roleArray = [];
-    res.forEach((role) => roleArray.push(role));
-    console.table(roleArray);
-    inquirer
-      .prompt([
-        {
-          name: "employee_manager",
-          type: "list",
-          message: "Which employee do you want to select?",
-          choices: roleArray,
-        },
-        {
-          name: "new_role",
-          type: "list",
-          message: "What role will they be assigned to?",
-          choices: ["Manager", "Engineer", "Intern", "Quit"],
-        },
-      ])
-      .then((res) => {
-        console.table(roleArray);
+// const updateRole = async () => {
+//   console.log("All Roles");
+//   let query = `SELECT * FROM employee ORDER BY manager_id DESC;`;
+//   console.log("Update an employees role id?");
+//   db.query(query, (err, res) => {
+//     if (err) throw err;
+//     let roleArray = [];
+//     res.forEach((role) => roleArray.push(role));
+//     console.table(roleArray);
+//     inquirer
+//       .prompt([
+//         {
+//           name: "employee_manager",
+//           type: "list",
+//           message: "Which employee do you want to select?",
+//           choices: roleArray,
+//         },
+//         {
+//           name: "new_role",
+//           type: "list",
+//           message: "What role will they be assigned to?",
+//           choices: ["Manager", "Engineer", "Intern", "Quit"],
+//         },
+//       ])
+//       .then((res) => {
+//         console.table(roleArray);
 
-        // console.log(res);
-        let answer = res.new_role;
+//         // console.log(res);
+//         let answer = res.new_role;
 
-        switch (answer) {
-          case "Manager":
-            allDepartments();
-            break;
-          case "Engineer":
-            allDepartments();
-            break;
-          case "Intern":
-            allDepartments();
-            break;
-          case "Quit":
-            allDepartments();
-            break;
-          default:
-            allDepartments();
-        }
-      });
-    });
-    allRoles();
-};
+//         switch (answer) {
+//           case "Manager":
+//             allDepartments();
+//             break;
+//           case "Engineer":
+//             allDepartments();
+//             break;
+//           case "Intern":
+//             allDepartments();
+//             break;
+//           case "Quit":
+//             allDepartments();
+//             break;
+//           default:
+//             allDepartments();
+//         }
+//       });
+//   });
+//   await allRoles();
+// };
 
 // Delete an Employee
 const deleteEmployee = () => {
