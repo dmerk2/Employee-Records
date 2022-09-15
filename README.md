@@ -63,7 +63,7 @@ npm start
 
 ---
 
-[![Walkthrough Video](./Assets/12-sql-homework-video-thumbnail.png)](https://2u-20.wistia.com/medias/2lnle7xnpk)
+[![Walkthrough Video](Assets\Walkthrough-Video.gif)](https://watch.screencastify.com/v/mFauye6d45b8UHTIvVO1)
 
 ## License
 
