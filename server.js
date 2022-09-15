@@ -241,7 +241,10 @@ const updateRole = async () => {
   db.query(query, (err, res) => {
     if (err) throw err;
     let roleArray = [];
-    res.forEach((role) => roleArray.push(role));
+    res.forEach((role) => {
+      let full_name = role.first_name + " " + role.last_name
+      roleArray.push(full_name)
+    })
     // console.table(roleArray);
     inquirer
       .prompt([
