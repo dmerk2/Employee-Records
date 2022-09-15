@@ -247,41 +247,47 @@ const updateRole = async () => {
     inquirer
       .prompt([
         {
-          name: "employee_manager",
-          type: "list",
-          message: "Which employee do you want to select?",
-          choices: roleArray,
+          name: "employee_id",
+          type: "input",
+          message: "Which employee ID do you want to select?",
         },
         {
           name: "new_role",
-          type: "list",
-          message: "What role will they be assigned to?",
-          choices: ["Manager", "Engineer", "Intern", "Quit"],
+          type: "input",
+          message: "What role ID will they be assigned to?",
+          // choices: ["Manager", "Engineer", "Intern", "Quit"],
         },
       ])
       .then((res) => {
         let answer = res.new_role;
+        console.log(res);
+        db.query(
+          `UPDATE employee
+        SET role_id = ?
+        WHERE id = ?;`,
+          [Number(res.new_role), Number(res.employee_id)],
+          (err, res) => {
+            if (err) throw err;
+            console.log("Successfully updated employees role!");
 
-        db.query(`UPDATE employee SET ? WHERE ?;`);
-        if (err) throw err;
-        console.log("Successfully updated employees role!")
-
-        switch (answer) {
-          case "Manager":
-            allRoles();
-            break;
-          case "Engineer":
-            allRoles();
-            break;
-          case "Intern":
-            allRoles();
-            break;
-          case "Quit":
-            quit();
-            break;
-          default:
-            allRoles();
-        }
+            switch (answer) {
+              case "Manager":
+                allRoles();
+                break;
+              case "Engineer":
+                allRoles();
+                break;
+              case "Intern":
+                allRoles();
+                break;
+              case "Quit":
+                quit();
+                break;
+              default:
+                allRoles();
+            }
+          }
+        );
       });
   });
 };
