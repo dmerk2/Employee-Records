@@ -63,7 +63,9 @@ npm start
 
 ---
 
-[![Walkthrough Video](Assets\Walkthrough-Video.gif)](https://watch.screencastify.com/v/mFauye6d45b8UHTIvVO1)
+!['Video of app'](Assets\Walkthrough-Video.gif)
+
+<a href="https://watch.screencastify.com/v/mFauye6d45b8UHTIvVO1">Link to view the application in action</a>
 
 ## License
 
