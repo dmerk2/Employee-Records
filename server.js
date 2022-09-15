@@ -48,7 +48,6 @@ const startQuestions = () => {
     ])
     .then((res) => {
       let answer = res.title;
-      // console.log(res);
 
       // Call individual functions for user interactions
       switch (answer) {
@@ -242,10 +241,9 @@ const updateRole = async () => {
     if (err) throw err;
     let roleArray = [];
     res.forEach((role) => {
-      let full_name = role.first_name + " " + role.last_name
-      roleArray.push(full_name)
-    })
-    // console.table(roleArray);
+      let full_name = role.first_name + " " + role.last_name;
+      roleArray.push(full_name);
+    });
     inquirer
       .prompt([
         {
@@ -262,8 +260,11 @@ const updateRole = async () => {
         },
       ])
       .then((res) => {
-        // console.table(roleArray);
         let answer = res.new_role;
+
+        db.query(`UPDATE employee SET ? WHERE ?;`);
+        if (err) throw err;
+        console.log("Successfully updated employees role!")
 
         switch (answer) {
           case "Manager":
@@ -276,10 +277,10 @@ const updateRole = async () => {
             allRoles();
             break;
           case "Quit":
-            allRoles();
+            quit();
             break;
           default:
-            allEmployees();
+            allRoles();
         }
       });
   });
